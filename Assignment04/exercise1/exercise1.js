@@ -12,6 +12,6 @@ function studentInfo(studentName, age, course="Web Technologies", isEnrolled=tru
 
 studentInfo(studentName, age);
 
-studentInfo("Pasquale", 65, "Programming Languages 2", false);
+studentInfo("Claudio", 65, "Programming Languages 2", false);
 
 studentInfo(23, "24", 25, 26);
