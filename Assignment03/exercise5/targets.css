@@ -6,110 +6,70 @@ section {
     height: 10%;
 }
 
-h1 ~ div{
+div {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    position: relative;
+    border-radius: 100%;
+}
+
+h1 ~ div{
     width: 200px;
     height: 200px;
-    border-radius: 100%;
     background-color: red;
 }
 
 .t1 div{
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    position: absolute;
     width: 160px;
     height: 160px;
-    border-radius: 100%;
     background-color: white;
 }
 
 .t1 div div{
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    position: absolute;
     width: 120px;
     height: 120px;
-    border-radius: 100%;
     background-color: red;
 }
 
 .t1 div div div{
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    position: absolute;
     width: 80px;
     height: 80px;
-    border-radius: 100%;
     background-color: white;
 }
 
 .t1 div div div div{
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    position: absolute;
     width: 40px;
     height: 40px;
-    border-radius: 100%;
     background-color: red;
+}
+
+
+.t2 div:nth-child(even) {
+    background-color: red;
+}
+
+.t2 div:nth-child(odd) {
+    background-color: white;
 }
 
 .t2 div{
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
     position: absolute;
     width: 160px;
     height: 160px;
-    border-radius: 100%;
-    background-color: white;
 }
 
 .t2 div + div{
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    position: absolute;
     width: 120px;
     height: 120px;
-    border-radius: 100%;
-    background-color: red;
 }
 
 .t2 div + div + div{
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    position: absolute;
     width: 80px;
     height: 80px;
-    border-radius: 100%;
-    background-color: white;
 }
 
 .t2 div + div + div + div{
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    position: absolute;
     width: 40px;
     height: 40px;
-    border-radius: 100%;
-    background-color: red;
 }
