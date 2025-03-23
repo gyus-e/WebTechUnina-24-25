@@ -1,0 +1,37 @@
+1: GET request to: 
+http://localhost/website/signup.html
+
+The query string is:
+?fname=giuseppe&
+lname=amato&
+bday=1997-12-17&
+gender=male&
+password=ciao&
+confirmpassword=ciao&
+bio=hello+everynyan&
+color=%23000000
+
+
+2: POST request to:
+http://localhost/website/signup.html
+
+There is no query string: the message is passed as the body of the HTTP request.
+
+If no action for POST requests has been configured, nothing else will happen.
+Otherwise:
+- In Apache2 Web Server, the action will be executed.
+- In Nginx, ERROR 405 NOT ALLOWED.
+
+3: The POST request body is identical to the query string of the GET request (except for the "?" at the beginning):
+fname=Giuseppe&
+lname=Amato&
+bday=1997-12-17&
+gender=male&
+password=ciao&
+confirmpassword=ciao&
+bio=hello+everynyan&
+color=%23000000
+
+
+4: The POST request is sent with an empty string in the body for the unspecified field.
+If the input is required, the POST request is not sent and the website asks the user to fill out the field.

@@ -1,0 +1,30 @@
+#container p {color: red;}       (1,0,1)
+.container p {color: orange;}    (0,1,1)
+[id] p {color: yellow;}          (0,1,1)
+div p {color: blue;}             (0,0,2)
+p {color: green;}                (0,0,1)
+
+Il testo sarà rosso.
+
+
+Se c'è uno stile inline che imposta il colore a rosa, il testo sará rosa:
+Entrambi sono authored styles (senza !important): stesso bucket.
+Gli stili inline appartengono a un layer piú specifico del file "style.css", che appartiene all'unnamed layer.
+
+
+Per sovrascrivere lo stile inline, si puó definire come !important lo stile desiderato nel css.
+Per renderlo viola, basta aggiungere la seguente regola (anche con un selettore piú specifico): 
+p {color: purple !important;}
+In questo modo il bucket di questa regola avrá precedenza su quello dello stile inline.
+
+
+Se lo stile inline è definito !important, allora il testo tornerá rosa:
+Entrambi sono authored styles con !important: stesso bucket.
+Gli stili inline appartengono a un layer piú specifico del file "style.css", che appartiene all'unnamed layer.
+
+
+L'unico modo per sovrascrivere un authored style !important che si trova nel layer inline, 
+è con un local user style !important o un user-agent style !important.
+Sovrascriverlo dall'authored css è impossibile.
+Tuttavia è possibile aggiungere una nuova regola inline con la stessa prioritá (bucket: authored !important; layer: inline).
+L'algoritmo cascade, trovando due regole con la stessa prioritá, applicherá l'ultima.

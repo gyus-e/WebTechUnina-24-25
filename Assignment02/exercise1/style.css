@@ -1,0 +1,55 @@
+header {
+    background-color: blue;
+    color: white;
+}
+
+nav {
+    background-color: lightgray;
+}
+
+nav span:not(:last-child):after {
+    content: " - ";
+}
+
+#paragraphs ~ p.text span.master {
+    font-weight: bold;
+    color: blue;
+}
+
+#paragraphs ~ p.text span.master ~ em  {
+    font-weight: bold;
+    color: red;
+}
+
+#paragraphs ~ p.text em {
+    color: green;
+    text-decoration: underline;
+}
+
+[target="_blank"]::before {
+    content: "➡️";
+}
+
+[href^="http"]::after {
+    content: "(ext.)"
+}
+
+.italist li:nth-child(3n+1) {
+    color: green;
+}
+
+.italist li:nth-child(3n+2) {
+    color: white;
+}
+
+.italist li:nth-child(3n) {
+    color: red;
+}
+
+#chess tr:nth-child(odd) td:nth-child(odd){
+    background-color: black !important;
+}
+
+#chess tr:nth-child(even) td:nth-child(even){
+    background-color: black !important;
+}
