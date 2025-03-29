@@ -49,15 +49,7 @@ function setupGame(containerId){
     });
 }
 
-function checkWinner(){
-    //Courtesy of copilot
-    draw = true;
-    if (movecount === 9){
-        draw = true;
-        gameover = true;
-        return;
-    }
-    for (let combination of winningCombinations) {
+function checkWinner(){    for (let combination of winningCombinations) {
         const [a, b, c] = combination;
         const cellA = td_matrix[a[0]][a[1]].textContent;
         const cellB = td_matrix[b[0]][b[1]].textContent;
@@ -65,9 +57,14 @@ function checkWinner(){
 
         if (cellA !== "" && cellA === cellB && cellB === cellC) {
             gameover = true;
-            draw = false
+            draw = false;
             return;
         }
+    }
+    
+    if (movecount === 9){
+        gameover = true;
+        return;
     }
 }
 
