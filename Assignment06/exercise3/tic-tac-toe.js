@@ -1,17 +1,35 @@
+const label = document.createElement('div');
+const table = document.createElement('table');
+const tbody = document.createElement('tbody');
+const tr = new Array();
+const td_matrix = new Array();
+
 const X = '❌';
 const O = '⭕';
 
+const winningCombinations = [
+    // Rows
+    [[0, 0], [0, 1], [0, 2]],
+    [[1, 0], [1, 1], [1, 2]],
+    [[2, 0], [2, 1], [2, 2]],
+    // Columns
+    [[0, 0], [1, 0], [2, 0]],
+    [[0, 1], [1, 1], [2, 1]],
+    [[0, 2], [1, 2], [2, 2]],
+    // Diagonals
+    [[0, 0], [1, 1], [2, 2]],
+    [[0, 2], [1, 1], [2, 0]]
+];
+
 let currentPlayer = X;
-let label = document.createElement('div');
 let gameover = false;
-let draw = false;
+let draw = true;
+let movecount = 0;
 
 function setupGame(containerId){
     let container = document.getElementById(containerId);
-
     container.appendChild(label);
     updateLabel();
-
     let board = createBoard();
     container.appendChild(board);
 
@@ -21,6 +39,7 @@ function setupGame(containerId){
             return;
         }
         cell.textContent = currentPlayer;
+        movecount++;
         checkWinner();
         if (gameover){
             updateLabel();
@@ -31,7 +50,25 @@ function setupGame(containerId){
 }
 
 function checkWinner(){
-    //TODO    
+    //Courtesy of copilot
+    draw = true;
+    if (movecount === 9){
+        draw = true;
+        gameover = true;
+        return;
+    }
+    for (let combination of winningCombinations) {
+        const [a, b, c] = combination;
+        const cellA = td_matrix[a[0]][a[1]].textContent;
+        const cellB = td_matrix[b[0]][b[1]].textContent;
+        const cellC = td_matrix[c[0]][c[1]].textContent;
+
+        if (cellA !== "" && cellA === cellB && cellB === cellC) {
+            gameover = true;
+            draw = false
+            return;
+        }
+    }
 }
 
 function updateLabel(){
@@ -56,11 +93,6 @@ function switchCurrentPlayer(){
 }
 
 function createBoard(){
-    let table = document.createElement('table');
-    let tbody = document.createElement('tbody');
-    let tr = new Array();
-    let td_matrix = new Array();
-
     table.appendChild(tbody);
 
     for (let i = 0; i < 3; i++){
