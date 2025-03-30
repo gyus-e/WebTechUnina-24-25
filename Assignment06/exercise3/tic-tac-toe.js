@@ -35,7 +35,7 @@ function setupGame(containerId){
 
     board.addEventListener("click", (event) => {
         let cell = event.target;
-        if (cell.textContent !== "" || gameover) {
+        if (cell.textContent !== "" || gameover || cell.tagName !== "TD"){
             return;
         }
         cell.textContent = currentPlayer;
@@ -49,7 +49,8 @@ function setupGame(containerId){
     });
 }
 
-function checkWinner(){    for (let combination of winningCombinations) {
+function checkWinner(){    
+    for (let combination of winningCombinations) {
         const [a, b, c] = combination;
         const cellA = td_matrix[a[0]][a[1]].textContent;
         const cellB = td_matrix[b[0]][b[1]].textContent;
