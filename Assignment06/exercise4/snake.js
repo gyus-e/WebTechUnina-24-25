@@ -83,7 +83,7 @@ class Snake {
     }
 }
 
-const board = new Board(5, 5);
+const board = new Board(10, 10);
 const  container = document.getElementById("snake-container");
 container.appendChild(board.table);
 let direction = RIGHT;
