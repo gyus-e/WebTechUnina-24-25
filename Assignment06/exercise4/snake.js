@@ -25,28 +25,26 @@ class BodyTile extends Div {
 
 class Snake {
     constructor(board) {
-        const X = Math.floor(board.table.rows.length / 2);
-        const Y = Math.floor(board.table.rows[0].cells.length / 2);
+        const X = Math.floor(board.rowsNumber / 2);
+        const Y = Math.floor(board.columnsNumber / 2);
 
-        this.length = 3;
         this.enlarge = false;
         this.digestionTime = new Array();
         this.body = new Array();
+
         this.body[0] = new HeadTile([X, Y]);
         this.body[1] = new BodyTile([X, Y-1]);
         this.body[2] = new BodyTile([X, Y-2]);
         this.spawn(board);
     }
 
+    head(){
+        return this.body[0];
+    }
 
     move(direction, board) {
-        const head = this.body[0];
-        const newPosition = [head.position[0] + direction[0], head.position[1] + direction[1]];
-        if(this.dead(newPosition, board)){
-            alert("Game Over");
-            clearInterval(intervalID);
-            return;
-        }
+        const newPosition = [this.head().position[0] + direction[0], this.head().position[1] + direction[1]];
+
         this.body.unshift(new HeadTile(newPosition));
         this.body[1].setClass("snake-body");
         if (!this.enlarge) {
@@ -57,8 +55,6 @@ class Snake {
             cell.removeChild(trash.div);
         } else {
             this.enlarge = false;
-            this.length++;
-            this.checkVictory(board);
         }
         this.spawn(board);
     }
@@ -79,20 +75,24 @@ class Snake {
         }
     }
 
-    dead(newPosition, board){
+    isDead(newPosition, board){
         let newTile = board.getTile(newPosition);
-        if (newTile.children.length > 0 && newTile.firstChild.className !== "food"){
+        
+        if (newPosition[0] < 0 || 
+            newPosition[0] >= board.rowsNumber ||
+            newPosition[1] < 0 || 
+            newPosition[1] >= board.columnsNumber){
             return true;
         }
-        return newPosition[0] < 0 || newPosition[0] >= board.table.rows.length ||
-            newPosition[1] < 0 || newPosition[1] >= board.table.rows[0].cells.length;
+
+        if (newTile.children.length > 0 && 
+            newTile.firstChild.className !== "food"){
+            return true;
+        }       
     }
 
-    checkVictory(board){
-        if (this.length === board.table.rows.length * board.table.rows[0].cells.length - 1){
-            alert("You win!");
-            clearInterval(intervalID);
-        }
+    hasWon(board){
+        return this.body.length === board.rowsNumber * board.columnsNumber - 1;
     }
 }
 
@@ -100,11 +100,46 @@ const board = new Board(10, 10);
 const  container = document.getElementById("snake-container");
 container.appendChild(board.table);
 let direction = RIGHT;
-let time_interval = 400;
+let time_interval = 200;
 let validMove = true;
 let pause = false;
+let intervalID = setInterval(myCallback, time_interval);
+
 let snake = new Snake(board);
 let food = new Food(board);
+
+function myCallback() {
+    if (pause){
+        validMove = true; 
+        return;
+    }
+
+    let newPosition = [snake.head().position[0] + direction[0], snake.head().position[1] + direction[1]];
+
+    if(snake.isDead(newPosition, board)){
+        gameOver("You lost");
+        return;
+    }
+    if (snake.hasWon(board)){
+        gameOver("You won");
+        return;
+    }
+
+    snake.move(direction, board);
+
+    validMove = true;
+
+    let currentTile = board.getTile(snake.head().position);
+    if (currentTile.firstChild.className === "food") {
+        snake.digestionTime.push(snake.body.length);
+
+        currentTile.removeChild(food.div);
+        food = new Food(board);
+
+        updateSpeed();
+    }
+    snake.digestFood(); 
+}
 
 document.addEventListener("keydown", (event) => {
     if (!validMove){
@@ -124,36 +159,15 @@ document.addEventListener("keydown", (event) => {
     validMove = false;
 });
 
-const intervalID = setInterval(myCallback, time_interval);
-
-function myCallback() {
-    if (pause){
-        validMove = true; 
-        return;
+function updateSpeed(){
+    if (snake.body.length % 5 === 0 && time_interval > 50){
+        time_interval *= 0.8;
+        clearInterval(intervalID);
+        intervalID = setInterval(myCallback, time_interval);
     }
-    snake.move(direction, board);
-    
-    validMove = true;
-
-    let head = snake.body[0];
-    let currentTile = board.getTile(head.position);
-    if (currentTile.firstChild.className === "food") {
-        snake.digestionTime.push(snake.length);
-
-        currentTile.removeChild(food.div);
-        food = new Food(board);
-
-        updateSpeed();
-    }
-    snake.digestFood();    
-    
 }
 
-function updateSpeed(){
-    if (snake.length > 5){
-        time_interval = 200;
-    }
-    if (snake.length > 10){
-        time_interval = 100;
-    }
+function gameOver(msg) {
+    alert(msg);
+    clearInterval(intervalID);
 }
