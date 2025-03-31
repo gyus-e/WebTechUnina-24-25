@@ -1,116 +1,131 @@
 "use strict";
 
-class Board {
-    constructor(rowsNumber, columnsNumber) {
-        this.table = document.createElement("table");
-        for (let i = 0; i < rowsNumber; i++) {
-            const row = document.createElement("tr");
-            this.table.appendChild(row);
-            for (let j = 0; j < columnsNumber; j++) {
-                const cell = document.createElement("td");
-                row.appendChild(cell);
-            }
-        }
+import { Board } from "./Board.js";
+import { Food } from "./Food.js";
+import { Div } from "./Div.js";
+
+class HeadTile extends Div {
+    constructor(position) {
+        super(position);
+        this.setClass("snake-head");
     }
 }
 
-class Div {
-    constructor() {
-        this.div = document.createElement("div");
-        this.div.style.width = "100%";
-        this.div.style.height = "100%";
-    }
-
-    setClass(className) {
-        this.div.setAttribute("class", className);
-    }
-
-    appendTo(parent) {
-        parent.appendChild(this.div);
-    }
-}
-
-class Food extends Div {
-    constructor(){
-        super();
-        this.setClass("food");   
-    }
-
-    spawn(board) {
-        const rows = board.table.rows.length;
-        const cols = board.table.rows[0].cells.length;
-        do {
-            const x = Math.floor(Math.random() * rows);
-            const y = Math.floor(Math.random() * cols);
-            const cell = board.table.rows[x].cells[y];
-            if (cell.children.length === 0) {
-                cell.appendChild(this.div);
-                break;
-            }
-        } while (true);
+class BodyTile extends Div {
+    constructor(position) {
+        super(position);
+        this.setClass("snake-body");
     }
 }
 
 class Snake {
-    constructor() {
+    constructor(board) {
+        const X = Math.floor(board.table.rows.length / 2);
+        const Y = Math.floor(board.table.rows[0].cells.length / 2);
+
         this.length = 3;
-        this.head = this.createHead();
-        this.body = this.createBody(this.length - 1);
-        this.queue = this.getStartingPositions();
-    }
-    
-    createHead() {
-        const head = new Div();
-        head.setClass("snake-head");
-        return head;
+        this.body = new Array();
+        this.body[0] = new HeadTile([X, Y]);
+        this.body[1] = new BodyTile([X, Y-1]);
+        this.body[2] = new BodyTile([X, Y-2]);
+        this.spawn(board);
     }
 
-    createBody(bodyLength) {
-        const body = new Array();
-        for (let i = 0; i < bodyLength; i++) {
-            const bodyPart = new Div();
-            bodyPart.setClass("snake-body");
-            body.push(bodyPart);
+    enlarge() {
+        const lastTile = this.body[this.body.length - 1];   
+        this.body.push(new BodyTile(lastTile.position));
+        this.length++;
+    }
+
+    move(direction, board) {
+        const head = this.body[0];
+        const newPosition = [head.position[0] + direction[0], head.position[1] + direction[1]];
+        if(this.gameOver(newPosition, board)){
+            alert("Game Over");
+            clearInterval(intervalID);
+            return;
         }
-        return body;
+        this.body.unshift(new HeadTile(newPosition));
+        this.body[1].setClass("snake-body");
+        
+        let trash = this.body.pop();
+        let X = trash.position[0];
+        let Y = trash.position[1];
+        const cell = board.getTile([X, Y]);
+        cell.removeChild(trash.div);
+
+        this.spawn(board);
     }
 
-    getStartingPositions() {
-        let queue = new Array();
-        const startingX = Math.floor(board.table.rows.length / 2);
-        const startingY = Math.floor(board.table.rows[0].cells.length / 2);
-        queue.push([startingX, startingY]);
-        queue.push([startingX, startingY - 1]);
-        queue.push([startingX, startingY - 2]);
-        return queue;
-    }
-
-    spawn(board){
-        for (let i = 0; i < this.length; i++) {
-            const pos = this.queue.shift();
-            const cell = board.table.rows[pos[0]].cells[pos[1]];
-            if (i === 0) {
-                this.head.appendTo(cell);
-            } else {
-                this.body[i - 1].appendTo(cell);
-            }
+    spawn(board) {
+        for (let tile of this.body){
+            board.getTile(tile.position).appendChild(tile.div);
         }
+    }
+
+    gameOver(newPosition, board){
+        let newTile = board.getTile(newPosition);
+        if (newTile.children.length > 0 && newTile.firstChild.className !== "food"){
+            return true;
+        }
+        return newPosition[0] < 0 || newPosition[0] >= board.table.rows.length ||
+            newPosition[1] < 0 || newPosition[1] >= board.table.rows[0].cells.length;
     }
 }
 
+const UP = [-1, 0];
+const DOWN = [1, 0];
+const LEFT = [0, -1];
+const RIGHT = [0, 1];
 
-const  container = document.getElementById("snake-container");
 const board = new Board(15, 20);
+const  container = document.getElementById("snake-container");
 container.appendChild(board.table);
 
-let snake = new Snake();
-snake.spawn(board);
+let direction = RIGHT;
+let time_interval = 500;
+let validMove = true;
 
-let food = new Food();
-food.spawn(board);
+let snake = new Snake(board);
+let food = new Food(board);
 
-const intervalID = setInterval(myCallback, 100);
+document.addEventListener("keydown", (event) => {
+    if (!validMove){
+        return;
+    }
+    if (event.key === "ArrowUp" && direction !== DOWN){
+        direction = UP;
+    } else if (event.key === "ArrowDown" && direction !== UP){
+        direction = DOWN;
+    } else if (event.key === "ArrowLeft" && direction !== RIGHT){
+        direction = LEFT;
+    } else if (event.key === "ArrowRight" && direction !== LEFT){
+        direction = RIGHT;
+    }
+    validMove = false;
+});
+
+const intervalID = setInterval(myCallback, time_interval);
 
 function myCallback() {
-    // food.spawn(board);
+    snake.move(direction, board);
+    validMove = true;
+
+    let head = snake.body[0];
+    let currentTile = board.getTile(head.position);
+    if (currentTile.firstChild.className === "food") {
+        currentTile.removeChild(food.div);
+        food = new Food(board);
+        snake.enlarge();
+        updateSpeed();
+    }
+}
+
+function updateSpeed(){
+    if (snake.length > 5){
+        time_interval = 200;
+    }
+    if (snake.length > 10){
+        time_interval = 100;
+    }
 }
