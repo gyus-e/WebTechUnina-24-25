@@ -1,6 +1,6 @@
 "use strict";
 
-export function addToList(id, value, list, done = false){
+export function addToList(list,id, value, done = false){
     list.appendChild(createListItem(id, value, done));
 }
 

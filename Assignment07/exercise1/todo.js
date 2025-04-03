@@ -15,7 +15,7 @@ form.onsubmit = (event) => {
     event.preventDefault();
     let value = inputTextBox.value;
     if (value !== ""){
-        addToList(i, value, todoList);
+        addToList(todoList, i, value);
         localStorage.setItem(i, JSON.stringify({"value": value, "done": false}));
         inputTextBox.value = "";
         i++;
@@ -36,6 +36,6 @@ todoList.ondblclick = (event) => {
 
 for (let object in localStorage){
     let item = JSON.parse(localStorage[object]);
-    addToList(object, item.value, todoList, item.done);
+    addToList(todoList, object, item.value, item.done);
     i++;
 }
