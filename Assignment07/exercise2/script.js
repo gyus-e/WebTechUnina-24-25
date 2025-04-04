@@ -21,7 +21,7 @@ keywords_input.addEventListener("keypress", function (event) {
 
 async function eventHandler() {
     const keywords = keywords_input.value;
-    keywords_input.value = "";
+    // keywords_input.value = "";
     
     const req = new Request(base_url, keywords);
     const response_json = await req.send();
